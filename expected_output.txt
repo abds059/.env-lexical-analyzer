@@ -1,0 +1,135 @@
+
+  +----------------------------------------------------------+
+  |   .env Formal Lexical Analyzer  CT-367                |
+  +----------------------------------------------------------+
+
+  ------------------------------------------------------------------------------------------
+  [line ##]  TOKEN TYPE      |  VALUE                         |  RISK (if any)
+  ------------------------------------------------------------------------------------------
+  [line  1]  COMMENT        |  # ============================================================
+  [line  2]  COMMENT        |  #  sample.env  —  Test input for the CT-367 .env Lexer
+  [line  3]  COMMENT        |  #  This file deliberately contains all token types including
+  [line  4]  COMMENT        |  #  cross-platform risk sites for demonstration purposes.
+  [line  5]  COMMENT        |  # ============================================================
+  [line  6]  NEWLINE
+  [line  7]  COMMENT        |  # ── Section 1: Clean, safe assignments ──
+  [line  8]  KEY            |  DB_HOST
+  [line  8]  EQUALS         |  =
+  [line  8]  UNQUOTED_VAL   |  localhost
+  [line  8]  NEWLINE
+  [line  9]  KEY            |  DB_PORT
+  [line  9]  EQUALS         |  =
+  [line  9]  UNQUOTED_VAL   |  5432
+  [line  9]  NEWLINE
+  [line 10]  KEY            |  APP_NAME
+  [line 10]  EQUALS         |  =
+  [line 10]  SINGLE_QUOTED  |  'My Application'
+  [line 10]  NEWLINE
+  [line 11]  KEY            |  DESCRIPTION
+  [line 11]  EQUALS         |  =
+  [line 11]  DOUBLE_QUOTED  |  "A production web server"
+  [line 11]  NEWLINE
+  [line 12]  NEWLINE
+  [line 13]  COMMENT        |  # ── Section 2: export keyword usage ──
+  [line 14]  EXPORT_KW      |  export
+  [line 14]  KEY            |  API_KEY
+  [line 14]  EQUALS         |  =
+  [line 14]  UNQUOTED_VAL   |  abc123
+  [line 14]  NEWLINE
+  [line 15]  EXPORT_KW      |  export
+  [line 15]  KEY            |  DEBUG
+  [line 15]  EQUALS         |  =
+  [line 15]  UNQUOTED_VAL   |  false
+  [line 15]  NEWLINE
+  [line 16]  NEWLINE
+  [line 17]  COMMENT        |  # ── Section 3: Quoted values with escape sequences ──
+  [line 18]  KEY            |  WELCOME_MSG
+  [line 18]  EQUALS         |  =
+  [line 18]  DOUBLE_QUOTED  |  "Hello\nWelcome to the app"
+  [line 18]  NEWLINE
+  [line 19]  KEY            |  TAB_EXAMPLE
+  [line 19]  EQUALS         |  =
+  [line 19]  DOUBLE_QUOTED  |  "column1\tcolumn2"
+  [line 19]  NEWLINE
+  [line 20]  KEY            |  ESCAPED_QUOTE
+  [line 20]  EQUALS         |  =
+  [line 20]  DOUBLE_QUOTED  |  "She said \"hello\""
+  [line 20]  NEWLINE
+  [line 21]  NEWLINE
+  [line 22]  COMMENT        |  # ── Section 4: Inline comments ──
+  [line 23]  KEY            |  MAX_RETRIES
+  [line 23]  EQUALS         |  =
+  [line 23]  UNQUOTED_VAL   |  3
+  [line 23]  INLINE_CMT     |  # maximum connection retries
+  [line 23]  NEWLINE
+  [line 24]  KEY            |  TIMEOUT
+  [line 24]  EQUALS         |  =
+  [line 24]  UNQUOTED_VAL   |  30
+  [line 24]  INLINE_CMT     |  # seconds
+  [line 24]  NEWLINE
+  [line 25]  NEWLINE
+  [line 26]  COMMENT        |  # ── Section 5: VAR_EXPANSION risk — ${VAR} ──
+  [line 27]  KEY            |  BASE_URL
+  [line 27]  EQUALS         |  =
+  [line 27]  UNQUOTED_VAL   |  https://api.example.com
+  [line 27]  NEWLINE
+  [line 28]  KEY            |  FULL_URL
+  [line 28]  EQUALS         |  =
+  [line 28]  VAR_EXPANSION  |  ${BASE_URL}   |  ⚠  RISK: platform-dependent — expanded by Docker and Bash, literal in Node/Python
+  [line 28]  UNQUOTED_VAL   |  /v1/endpoint
+  [line 28]  NEWLINE
+  [line 29]  KEY            |  COMPOSED
+  [line 29]  EQUALS         |  =
+  [line 29]  VAR_EXPANSION  |  ${DB_HOST}    |  ⚠  RISK: platform-dependent — expanded by Docker and Bash, literal in Node/Python
+  [line 29]  UNQUOTED_VAL   |  :
+  [line 29]  VAR_EXPANSION  |  ${DB_PORT}    |  ⚠  RISK: platform-dependent — expanded by Docker and Bash, literal in Node/Python
+  [line 29]  UNQUOTED_VAL   |  /mydb
+  [line 29]  NEWLINE
+  [line 30]  NEWLINE
+  [line 31]  COMMENT        |  # ── Section 6: VAR_SHORT risk — $VAR ──
+  [line 32]  KEY            |  SECRET_KEY
+  [line 32]  EQUALS         |  =
+  [line 32]  UNQUOTED_VAL   |  abc
+  [line 32]  VAR_SHORT      |  $RANDOM_SUFFIX  |  ⚠  RISK: platform-dependent — boundary ambiguous in shell, expanded by Docker/Bash
+  [line 32]  NEWLINE
+  [line 33]  KEY            |  LOG_PATH
+  [line 33]  EQUALS         |  =
+  [line 33]  VAR_SHORT      |  $HOME           |  ⚠  RISK: platform-dependent — boundary ambiguous in shell, expanded by Docker/Bash
+  [line 33]  UNQUOTED_VAL   |  /logs/app.log
+  [line 33]  NEWLINE
+  [line 34]  NEWLINE
+  [line 35]  COMMENT        |  # ── Section 7: Mixed — safe and risky on same line ──
+  [line 36]  KEY            |  CONNECTION
+  [line 36]  EQUALS         |  =
+  [line 36]  UNQUOTED_VAL   |  postgresql://
+  [line 36]  VAR_EXPANSION  |  ${DB_HOST}    |  ⚠  RISK: platform-dependent — expanded by Docker and Bash, literal in Node/Python
+  [line 36]  UNQUOTED_VAL   |  :
+  [line 36]  VAR_EXPANSION  |  ${DB_PORT}    |  ⚠  RISK: platform-dependent — expanded by Docker and Bash, literal in Node/Python
+  [line 36]  UNQUOTED_VAL   |  /mydb
+  [line 36]  NEWLINE
+  [line 37]  NEWLINE
+  [line 38]  COMMENT        |  # ── Section 8: Blank lines are valid ──
+  [line 39]  NEWLINE
+  [line 40]  COMMENT        |  # ── Section 9: Invalid / malformed lines ──
+  [line 41]  KEY            |  MISSING_VALUE
+  [line 41]  EQUALS         |  =
+  [line 41]  NEWLINE
+  [line 42]  INVALID        |  l  |  ⚠  RISK: unparseable token — no platform can agree on this line
+  [line 42]  INVALID        |  o  |  ⚠  RISK: unparseable token — no platform can agree on this line
+  [line 42]  INVALID        |  w  |  ⚠  RISK: unparseable token — no platform can agree on this line
+  ... (lowercase_key flagged char by char as INVALID)
+  [line 43]  KEY            |  UNCLOSED_SINGLE
+  [line 43]  EQUALS         |  =
+  [line 43]  INVALID        |  'not closed   |  ⚠  RISK: unclosed single-quoted string
+  [line 44]  INVALID        |  B  |  ⚠  RISK: unparseable token — no platform can agree on this line
+  ... (BAD LINE WITH SPACES flagged as INVALID)
+  ------------------------------------------------------------------------------------------
+
+  SUMMARY
+  -------
+  Total lines    : 44
+  Total tokens   : 78
+  Risk sites     : 7  (lines where platforms disagree)
+  Invalid tokens : 5  (lines no platform can parse cleanly)
+
+  ⚠  Review flagged tokens before deploying to a multi-platform environment.
