@@ -37,9 +37,9 @@ gcc lex.yy.c -o envlexer
 | SINGLE_QUOTED | `'[^'\n]*'`              | Single-quoted literal (no escapes)   |
 | DOUBLE_QUOTED | `"(\\. or [^"\\\n])*"`   | Double-quoted with escape sequences  |
 | MULTILINE_VAL | `"(\\.  or [^"\\])*"`    | Double-quoted spanning lines         |
-| VAR_EXPANSION | `\${[A-Z_][A-Z0-9_]*}`   | ⚠ Risk — expanded by Docker/Bash     |
-| VAR_SHORT     | `\$[A-Z_][A-Z0-9_]*`     | ⚠ Risk — boundary ambiguous in shell |
-| INVALID       | `.` (catch-all)          | ⚠ Risk — unparseable token           |
+| VAR_EXPANSION | `\${[A-Z_][A-Z0-9_]*}`   | Risk — expanded by Docker/Bash       |
+| VAR_SHORT     | `\$[A-Z_][A-Z0-9_]*`     | Risk — boundary ambiguous in shell   |
+| INVALID       | `.` (catch-all)          | Risk — unparseable token             |
 | NEWLINE       | `\n`                     | Line boundary, resets lexer state    |
 
 ---
